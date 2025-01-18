@@ -16,6 +16,25 @@ REDDIT_PROMPT = """You are a highly intelligent data analyst and extraction agen
                 upvotes: The number of upvotes the Reddit post has received. This is used to measure the posts popularity or engagement.
             Please extract and present the pain points in clear, concise bullet points. Avoid any unnecessary explanations or unrelated information"""
 
+RESPONSE_STRUCTURE_PROMPT = """
+Now I will describe the required JSON structure:
+    {
+        "key_pain_points": [], // an array of points which are strings, specified on 1st point, max 5 items in the list
+        "triggers": [], // an array of points which are strings, specified on 2nd point, max 5 items in the list
+        "hooks": [], // an array of points which are strings, specified on 3rd point, max 5 items in the list
+        "meta_tags": [], // finally generate some meta tags an array of strings of tags, max 5 items in the list
+        "keywords": [], // an list of keywords whcich were main and important it should be an list of strings, max 5 items in the list
+        "references": [], // an list of url references of the sources you used to generate the results keep it max 5 items in the list
+        "cta": {
+            "title": "", // a string which is the title of the CTA 
+            "description": "" // a string which is the description of the CTA
+            cta_message: "" // a string which is the text of the CTA button so it should be of strictly max 2 words.
+        }
+    }
+Important:
+**Please return only the JSON without wrapping it in a code block or additional formatting**. Remember to keep the JSON structure as described above. Keep it as simple as possible the json structure. 
+"""
+
 GOOGLE_PROMPT = """You are a highly intelligent data analyst and extraction agent. Your task is to identify and list the {FORMATTER_TYPE} based on the search results from Google for the query '{user_query}'.
             The data contains responses from various Google search results.
 
@@ -49,6 +68,30 @@ YOUTUBE_PROMPT = """You are a highly intelligent data analyst and extraction age
 
             Formatted Data:
             {formatted_data}
+            And here is the structure description of the data: 
+            Field Descriptions
+Root Level
+
+    youtube:
+    An array containing objects that represent YouTube video results related to a query.
+
+Inside Each Object in the youtube Array
+
+    title:
+    The title of the YouTube video, summarizing its content.
+    Example:
+    "Top 5 Fitness Apps - FREE Workout Apps - Mashable India"
+
+    description:
+    A brief text excerpt or summary of the video's content, often provided by the uploader.
+    Example:
+    "We always blame technology for being unfit. But that is going to change with these fitness apps."
+    Note: This field can sometimes be empty, as seen in one of the objects.
+
+    url:
+    The URL of the YouTube video that links directly to the video page.
+    Example:
+    "https://www.youtube.com/watch?v=6sozUabM8iw"
 
             Please extract and present the pain points in clear, concise bullet points from the tweets."""
 
@@ -104,4 +147,17 @@ POINTS_FORMATTER = """ 1. key pain points or challenges which is challenges or f
                 "Shop now, pay later with easy installment options."
 
             These hooks should be compelling and instantly attract users' attention.
+            
+            4. I need you to generate to generate Call to Action (CTA) for the user based on the extracted pain points, triggers, and hooks. The CTA should be a clear and actionable statement that encourages users to take a specific step or engage with a solution. It should be concise, compelling, and directly related to the identified pain points and triggers.
+
+            For example, if the pain points are related to fitness apps and the triggers are lack of motivation and time constraints, a suitable CTA could be:
+            
+            "Start your fitness journey today with our 20-minute workout plans! Get motivated and fit in no time!"
             """
+            
+# CTA = """I need you to generate to generate Call to Action (CTA) for the user based on the extracted pain points, triggers, and hooks. The CTA should be a clear and actionable statement that encourages users to take a specific step or engage with a solution. It should be concise, compelling, and directly related to the identified pain points and triggers.
+
+#             For example, if the pain points are related to fitness apps and the triggers are lack of motivation and time constraints, a suitable CTA could be:
+            
+#             "Start your fitness journey today with our 20-minute workout plans! Get motivated and fit in no time!" 
+#             here is the """

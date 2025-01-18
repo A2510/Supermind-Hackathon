@@ -63,7 +63,7 @@ export default function RootLayout({
                 </Breadcrumb>
               </div>
               <div className="ml-auto px-3">
-                <NavActions />
+                Date: {new Date().toLocaleDateString()}
               </div>
             </header>
             {children}

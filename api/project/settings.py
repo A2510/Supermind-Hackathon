@@ -103,7 +103,8 @@ CACHES = {
         'LOCATION': 'redis://redis:6379/1',  # The hostname 'redis' matches the container name in your Docker setup
         'OPTIONS': {
             'CLIENT_CLASS': 'django_redis.client.DefaultClient',
-        }
+        },
+        "KEY_PREFIX": "dashboard",
     }
 }
 
@@ -197,6 +198,7 @@ SEARCHA_API = " AIzaSyCYdWWpYlAOUprSEDkj4_y1QBFKW7-dCbI"
 USER_AGENT = "windows:com.PRAW:v1.0.0 (by /u/Jaded_Jackass"
 REDDIT_CLIENT_ID = "gG-fuLq1UGWlidmCLVBQiw"
 REDDIT_SECRET = "7g42kLdqN2ZmpfQnolRx5WB10XR9Qg"
+GEMINI_API_KEY = "AIzaSyC4EJnuBGOriYGzUpbAN07sn0u8DcZt41w"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/
