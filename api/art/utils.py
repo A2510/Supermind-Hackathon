@@ -73,13 +73,14 @@ class Scraper:
             print(f"Error scraping YouTube: {e}")
             return []
 
-    def scrape_reddit(self, query, subreddit="all", limit=5, comment_limit=10):
+    def scrape_reddit(self, query, subreddit="all", limit=5, comment_limit=5):
         """Scrape Reddit search results."""
         if not self.reddit_credentials:
             print("Reddit credentials are not provided.")
             return []
 
         try:
+            print("Scraping Reddit...")
             reddit = praw.Reddit(**self.reddit_credentials)
             subreddit = reddit.subreddit(subreddit)
             results = []

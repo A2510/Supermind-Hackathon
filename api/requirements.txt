@@ -21,3 +21,4 @@ google-play-scraper==1.2.7
 praw==7.8.1
 serpapi==0.1.5
 google-generativeai
+google-search-results
