@@ -1,17 +1,12 @@
-import os
 import google.generativeai as genai
 import json
 import logging
-from art.source_template import RESPONSE_STRUCTURE_PROMPT, REDDIT_PROMPT, GOOGLE_PROMPT, YOUTUBE_PROMPT, POINTS_FORMATTER
+from art.source_template import RESPONSE_STRUCTURE_PROMPT, REDDIT_PROMPT, GOOGLE_PROMPT, YOUTUBE_PROMPT, POINTS_FORMATTER, GENERATE_SUMMARY_PROMPT
+import re
 
 logger = logging.getLogger(__name__)
 logger.setLevel(logging.INFO)
 
-
-# genai.configure(
-#     api_key=os.environ.get("GEMINI_API_KEY", "AIzaSyC4EJnuBGOriYGzUpbAN07sn0u8DcZt41w")
-# )
-# from art.source_template import REDDIT_PROMPT, GOOGLE_PROMPT, YOUTUBE_PROMPT, POINTS_FORMATTER, RESPONSE_STRUCTURE_PROMPT
 
 source_prompt_mapper = {
     "reddit": REDDIT_PROMPT,
@@ -28,19 +23,42 @@ class GeminiService:
         prompt_template = source_prompts.get(source)
         if not prompt_template or not formatted_data:
             return None
+
         prompt = prompt_template.format(
             user_query=user_query,
             formatted_data=formatted_data,
             FORMATTER_TYPE=formatter_type,
         )
-        return prompt + "\n" + RESPONSE_STRUCTURE_PROMPT
+        return prompt + RESPONSE_STRUCTURE_PROMPT
 
     def generate_response(self, prompt):
         if not prompt:
-            return []
+            return {}
         try:
             response = self.model.generate_content(prompt)
-            return json.loads(response.text)  # Adjust if the response format changes
+            return json.loads(response.text)
         except Exception as e:
-            logger.error(f"Error generating Gemini response: {e}")
-            return []
+            try:
+                response = self.model.generate_content(prompt)
+                # Extract JSON content from the response
+                pattern = r'```json\n([\s\S]*?)\n```'
+                print(response.text)
+                match = re.search(pattern, response.text)
+                print(match)
+                # Extract JSON content from the response
+                # json_content = re.search(r"\{.*\}", response)
+                return json.loads(match.group(1))
+            except Exception as e:
+                logger.error(f"Error generating response: {e}")
+                return {}
+        
+    def generate_summary(self, response):
+        if not response:
+            return {}
+        try:
+            summary_prompt = GENERATE_SUMMARY_PROMPT.format(response=json.dumps(response))
+            generated_response = self.model.generate_content(summary_prompt)
+            return json.loads(generated_response.text)
+        except Exception as e:
+            logger.error(f"Error generating response: {e}")
+            return {}

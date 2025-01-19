@@ -183,25 +183,3 @@ class Scraper:
             "app_reviews": app_reviews,
         }
 
-if __name__ == "__main__":
-    GOOGLE_API_KEY = "AIzaSyCYdWWpYlAOUprSEDkj4_y1QBFKW7-dCbI"
-    SEARCH_ENGINE_ID = "f1811d352aca148a3"
-    SEARCHA_API = " AIzaSyCYdWWpYlAOUprSEDkj4_y1QBFKW7-dCbI"
-    USER_AGENT = "windows:com.PRAW:v1.0.0 (by /u/Jaded_Jackass"
-    REDDIT_CLIENT_ID = "gG-fuLq1UGWlidmCLVBQiw"
-    REDDIT_SECRET = "7g42kLdqN2ZmpfQnolRx5WB10XR9Qg"
-
-    reddit_credentials = {
-        "client_id": REDDIT_CLIENT_ID,
-        "client_secret": REDDIT_SECRET,
-        "user_agent": USER_AGENT,
-    }
-
-    scraper = Scraper(google_api_key=GOOGLE_API_KEY, search_engine=SEARCH_ENGINE_ID, reddit_credentials=reddit_credentials)
-
-    query = input("Enter your query: ")
-    app_id = "com.example.app"  # Replace with actual app ID
-    results = scraper.scrape_all(query, app_id=app_id)
-
-    print("Results:")
-    print(results)

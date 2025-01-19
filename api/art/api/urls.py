@@ -5,5 +5,5 @@ urlpatterns = [
     path('', views.getRoutes, name='routes'),
     path('dashboard/', views.DashboardView.as_view(), name='dashboard'),   
     path('get-trends/', views.GetTrends.as_view(), name='get-trends'),
-    # path('get-summary/', views.GetSummary.as_view(), name='get-summary'),
+    path('get-summary/', views.GetSummary.as_view(), name='get-summary'),
 ]
