@@ -1,11 +1,11 @@
 import { Toaster } from "@/components/ui/toaster";
 import { AppSidebar } from "@/components/app-sidebar";
-import { NavActions } from "@/components/nav-actions";
 import {
   Breadcrumb,
   BreadcrumbItem,
   BreadcrumbList,
   BreadcrumbPage,
+  BreadcrumbSeparator,
 } from "@/components/ui/breadcrumb";
 import { Separator } from "@/components/ui/separator";
 import {
@@ -56,14 +56,20 @@ export default function RootLayout({
                   <BreadcrumbList>
                     <BreadcrumbItem>
                       <BreadcrumbPage className="line-clamp-1">
-                        Project Management & Task Tracking
+                        Results
+                      </BreadcrumbPage>
+                    </BreadcrumbItem>
+                    <BreadcrumbSeparator />
+                    <BreadcrumbItem>
+                      <BreadcrumbPage className="line-clamp-1">
+                        Quick Commerce App 🛵
                       </BreadcrumbPage>
                     </BreadcrumbItem>
                   </BreadcrumbList>
                 </Breadcrumb>
               </div>
-              <div className="ml-auto px-3">
-                Date: {new Date().toLocaleDateString()}
+              <div className="text-xs opacity-80 ml-auto px-3">
+                Created at {new Date().toLocaleDateString()}
               </div>
             </header>
             {children}

@@ -30,7 +30,7 @@ Summarized insights and visual data are displayed.
 ---
 ## How to Use
 
-1. **Input**: Enter a topic or keyword (e.g., "time-saving tools").
+1. **Input**: Enter a topic or keyword (e.g., "Fitness app").
 2. **Review**: Analyze the dashboard for insights and visual data.
 3. **Implement**: Use findings to craft ads or strategies.
 
