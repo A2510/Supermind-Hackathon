@@ -31,7 +31,8 @@ import { getDashboard } from "../server/actions/getDashboard";
 import { ExternalLink, Lightbulb } from "lucide-react";
 import Link from "next/link";
 import { CTADialog } from "../components/dialog";
-import { DashboardData } from "@/types/types";
+import { DashboardData, SummaryData } from "@/types/types";
+import { getSummary } from "../server/actions/getSummary";
 
 
 const FormSchema = z.object({
@@ -44,6 +45,7 @@ const FormSchema = z.object({
 
 export function UserInputForm() {
   const [results, setResults] = useState<DashboardData | null>(null);
+  const [summary, setSummary] = useState<SummaryData | null>(null);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -55,114 +57,121 @@ export function UserInputForm() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const response = await getDashboard(data);
-    console.log(response.data, "response");
-    if (response.status === "error") {
+    const dashboardResponse = await getDashboard(data);
+    if (dashboardResponse.status === "error") {
       toast({
         title: "An error occurred",
-        description: response.message,
+        description: dashboardResponse.message,
       });
       return;
     }
-    setResults(response.data);
+    setResults(dashboardResponse.data);
+    const summaryResponse = await getSummary(data);
+    if (summaryResponse.status === "error") {
+      toast({
+        title: "An error occurred",
+        description: summaryResponse.message,
+      });
+      return;
+    }
+    setSummary(summaryResponse.data);
   }
 
   return (
     <>
-      {results ?
+      {results ? (
         <div className="flex flex-1 flex-col items-center gap-4 px-4 py-10">
           <h1 className="flex items-center gap-2 text-xl font-bold">
             Results <Lightbulb />
           </h1>
-          <p>Generated Title for Ad</p>
+          <p>{summary?.title || "AI generate title"}</p>
           <div className="mx-auto w-full p-4 space-y-4 items-center">
             <div>
               <div className="text-base font-bold">Summary</div>
-              <p className="text-sm">Lorem Ispum </p>
+              <p className="text-sm">{summary?.description || "ART summary"}</p>
             </div>
 
             <Tabs defaultValue="google">
               <TabsList>
-                {Object.keys(results).map((source, index) => (
-                    <TabsTrigger key={index} value={source}>
-                      {source.charAt(0).toUpperCase() + source.slice(1)}
-                    </TabsTrigger>
-                  ))}
-              </TabsList>
-              {Object.keys(results).map((source, index) => (
-                  <TabsContent value={source} key={index}>
-                    <div>
-                      <div className="text-base font-bold">User Problems</div>
-                      <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
-                        {results?.[source]?.key_pain_points?.map((point, idx) => (
-                          <li key={idx}>{point}</li>
-                        ))}
-                      </ul>
-                    </div>
-                    <div>
-                      <div className="text-base font-bold">Key Triggers</div>
-                      <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
-                        {results?.[source]?.key_triggers?.map((trigger, idx) => (
-                          <li key={idx}>{trigger}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div className="text-base font-bold">Hooks</div>
-                      <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
-                        {results?.[source]?.hooks?.map((hook, idx) => (
-                          <li key={idx}>{hook}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div className="text-base font-bold">Meta Tags</div>
-                      <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
-                        {results?.[source]?.meta_tags?.map((tag, idx) => (
-                          <li key={idx}>{tag}</li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div className="text-base font-bold">Keywords</div>
-                      <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
-                        {results?.[source]?.keywords?.map((keyword, idx) => (
-                          <span
-                            key={idx}
-                            className="px-2 py-1 rounded-md bg-blue-100 inline-block mr-2"
-                          >
-                            {keyword}
-                          </span>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <div>
-                      <div className="text-base font-bold">References</div>
-                      <ul className="list-inside text-sm border p-2 rounded-lg text-sky-600">
-                        {results?.[source]?.references?.map((ref, idx) => (
-                          <li key={idx}>
-                            <Link
-                              href={ref}
-                              className="flex gap-1 items-center hover:underline"
-                            >
-                              {ref} <ExternalLink size={16} />
-                            </Link>
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
-
-                    <CTADialog cta={results?.[source]?.cta}/>
-                  </TabsContent>
+                {Object.keys(results).filter((source) => Object.keys(results[source] || {}).length > 0).map((source, index) => (
+                  <TabsTrigger key={index} value={source}>
+                    {source.charAt(0).toUpperCase() + source.slice(1)}
+                  </TabsTrigger>
                 ))}
+              </TabsList>
+              {Object.keys(results).filter((source) => Object.keys(results[source] || {}).length > 0).map((source, index) => (
+                <TabsContent value={source} key={index}>
+                  <div>
+                    <div className="text-base font-bold">User Problems</div>
+                    <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
+                      {results?.[source]?.key_pain_points?.map((point, idx) => (
+                        <li key={idx}>{point}</li>
+                      ))}
+                    </ul>
+                  </div>
+                  {results?.[source]?.triggers?.length > 0 && <div>
+                    <div className="text-base font-bold">Key Triggers</div>
+                    <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
+                      {results?.[source]?.triggers?.map((trigger, idx) => (
+                        <li key={idx}>{trigger}</li>
+                      ))}
+                    </ul>
+                  </div>}
+
+                  {results?.[source]?.hooks?.length > 0 && <div>
+                    <div className="text-base font-bold">Hooks</div>
+                    <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
+                      {results?.[source]?.hooks?.map((hook, idx) => (
+                        <li key={idx}>{hook}</li>
+                      ))}
+                    </ul>
+                  </div>}
+
+                  {results?.[source]?.meta_tags?.length > 0 && <div>
+                    <div className="text-base font-bold">Meta Tags</div>
+                    <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
+                      {results?.[source]?.meta_tags?.map((tag, idx) => (
+                        <li key={idx}>{tag}</li>
+                      ))}
+                    </ul>
+                  </div>}
+
+                  {results?.[source]?.keywords?.length > 0 && <div>
+                    <div className="text-base font-bold">Keywords</div>
+                    <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
+                      {results?.[source]?.keywords?.map((keyword, idx) => (
+                        <span
+                          key={idx}
+                          className="px-2 py-1 rounded-md bg-blue-100 inline-block mr-2"
+                        >
+                          {keyword}
+                        </span>
+                      ))}
+                    </ul>
+                  </div>}
+
+                  {results?.[source]?.references?.length > 0 && <div>
+                    <div className="text-base font-bold">References</div>
+                    <ul className="list-inside text-sm border p-2 rounded-lg text-sky-600">
+                      {results?.[source]?.references?.map((ref, idx) => (
+                        <li key={idx}>
+                          <Link
+                            href={ref}
+                            className="flex gap-1 items-center hover:underline"
+                          >
+                            {ref} <ExternalLink size={16} />
+                          </Link>
+                        </li>
+                      ))}
+                    </ul>
+                  </div>}
+                  {results?.[source]?.cta && <CTADialog cta={results?.[source]?.cta} />}
+                </TabsContent>
+              ))}
             </Tabs>
           </div>
         </div>
-        :
+      ) : (
         <Form {...form}>
           <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
             <FormField
@@ -302,7 +311,7 @@ export function UserInputForm() {
               Get Insights <SendHorizonal size={16} />
             </Button>
           </form>
-        </Form>
+        </Form>)
       }
     </>
   )

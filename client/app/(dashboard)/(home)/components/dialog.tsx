@@ -1,17 +1,19 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  // DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-// import Image from "next/image";
 import { SourceData } from "@/types/types";
 
 export function CTADialog({ cta }: { cta: SourceData["cta"] }) {
+  // State to manage image URL
+  // const imageUrl = await fetchPhoto({ query: cta?.title || null }) || "/audi.jpg";
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -25,17 +27,15 @@ export function CTADialog({ cta }: { cta: SourceData["cta"] }) {
               Logo
             </span>
             <DialogTitle>{cta?.title}</DialogTitle>
-            <DialogDescription>
-              {cta?.description}
-            </DialogDescription>
+            <DialogDescription>{cta?.description}</DialogDescription>
           </DialogHeader>
           <Button type="submit" className="w-fit mt-auto">
             {cta?.cta_message}
           </Button>
         </div>
-        <img
-          src="https://stimg.cardekho.com/images/carexteriorimages/630x420/Audi/A4/10548/1732257078935/front-left-side-47.jpg"
-          alt="Audi"
+        <Image
+          src="/audi.jpg"
+          alt={cta?.title || "Logo"}
           width={150}
           height={425}
           className="h-full w-1/3 object-cover mr-4"

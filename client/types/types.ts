@@ -32,3 +32,8 @@ export interface SourceData {
     cta_message: string;
   }
 }
+
+export interface SummaryData {
+  title: string;
+  description: string;
+}
