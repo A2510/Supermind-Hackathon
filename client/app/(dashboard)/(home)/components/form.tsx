@@ -31,7 +31,8 @@ import { getDashboard } from "../server/actions/getDashboard";
 import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { CTADialog } from "../components/dialog";
-import { DashboardData } from "@/types/types";
+import { DashboardData, SummaryData } from "@/types/types";
+import { getSummary } from "../server/actions/getSummary";
 
 const FormSchema = z.object({
   query: z.string().min(2, {
@@ -43,6 +44,7 @@ const FormSchema = z.object({
 
 export function UserInputForm() {
   const [results, setResults] = useState<DashboardData | null>(null);
+  const [summary, setSummary] = useState<SummaryData | null>(null);
 
   const form = useForm<z.infer<typeof FormSchema>>({
     resolver: zodResolver(FormSchema),
@@ -54,16 +56,24 @@ export function UserInputForm() {
   });
 
   async function onSubmit(data: z.infer<typeof FormSchema>) {
-    const response = await getDashboard(data);
-    console.log(response.data, "response");
-    if (response.status === "error") {
+    const dashboardResponse = await getDashboard(data);
+    if (dashboardResponse.status === "error") {
       toast({
         title: "An error occurred",
-        description: response.message,
+        description: dashboardResponse.message,
       });
       return;
     }
-    setResults(response.data);
+    setResults(dashboardResponse.data);
+    const summaryResponse = await getSummary(data);
+    if (summaryResponse.status === "error") {
+      toast({
+        title: "An error occurred",
+        description: summaryResponse.message,
+      });
+      return;
+    }
+    setSummary(summaryResponse.data);
   }
 
   return (
@@ -71,22 +81,29 @@ export function UserInputForm() {
       {results ? (
         <div className="flex flex-1 flex-col w-full px-12">
           <div className="mx-auto w-full p-4 space-y-4 items-center">
-            <p className="mt-4">Generated Title for Ad</p>
+            <p className="mt-4">Addressing Delivery Challenges with Speed and Convenience</p>
 
             <div>
               <div className="text-base font-bold">Summary</div>
-              <p className="text-sm">Lorem Ispum </p>
+              <p className="text-sm">This data highlights key challenges like long delivery times, high charges, and limited options in quick commerce. Users are driven by convenience, urgency, and time constraints, with hooks emphasizing fast, effortless delivery. Key terms like "quick commerce" and "instant delivery" reflect the focus on speed and convenience for online grocery shopping.</p>
             </div>
 
             <Tabs defaultValue="google">
               <TabsList>
-                {Object.keys(results).map((source, index) => (
+                {Object.keys(results).filter((source) => Object.keys(results[source] || {}).length > 0).map((source, index) => (
                   <TabsTrigger key={index} value={source}>
+                     <Image
+                            src={`/${source}.png`}
+                            alt="google"
+                            width={50}
+                            height={50}
+                            className="h-3 w-3 mx-1"
+                          />
                     {source.charAt(0).toUpperCase() + source.slice(1)}
                   </TabsTrigger>
                 ))}
               </TabsList>
-              {Object.keys(results).map((source, index) => (
+              {Object.keys(results).filter((source) => Object.keys(results[source] || {}).length > 0).map((source, index) => (
                 <TabsContent value={source} key={index}>
                   <div>
                     <div className="text-base font-bold">User Problems</div>
@@ -96,53 +113,53 @@ export function UserInputForm() {
                       ))}
                     </ul>
                   </div>
-                  <div>
+                  {results?.[source]?.triggers?.length > 0 && <div>
                     <div className="text-base font-bold mt-8">Key Triggers</div>
                     <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
-                      {results?.[source]?.key_triggers?.map((trigger, idx) => (
+                      {results?.[source]?.triggers?.map((trigger, idx) => (
                         <li key={idx}>{trigger}</li>
                       ))}
                     </ul>
-                  </div>
+                  </div>}
 
-                  <div>
-                    <div className="text-base font-bold mt-8">Hooks</div>
+                  {results?.[source]?.hooks?.length > 0 && <div>
+                    <div className="text-base font-bold">Hooks</div>
                     <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
                       {results?.[source]?.hooks?.map((hook, idx) => (
                         <li key={idx}>{hook}</li>
                       ))}
                     </ul>
-                  </div>
+                  </div>}
 
-                  <div>
+                  {results?.[source]?.meta_tags?.length > 0 && <div>
                     <div className="text-base font-bold mt-8">Meta Tags</div>
                     <div className=" text-sm border p-2 rounded-lg">
                       {results?.[source]?.meta_tags?.map((tag, idx) => (
                         <span
-                          key={idx}
-                          className="px-2 py-1 rounded-md bg-green-100 inline-block whitespace-nowrap m-1"
-                        >
-                          {tag}
+                        key={idx}
+                        className="px-2 py-1 rounded-md bg-green-100 inline-block whitespace-nowrap m-1"
+                      >
+                        {tag}
                         </span>
                       ))}
                     </div>
-                  </div>
+                  </div>}
 
-                  <div>
-                    <div className="text-base font-bold mt-8">Keywords</div>
-                    <div className=" text-sm border p-2 rounded-lg">
+                  {results?.[source]?.keywords?.length > 0 && <div>
+                    <div className="text-base font-bold">Keywords</div>
+                    <ul className="list-disc list-inside text-sm border p-2 rounded-lg">
                       {results?.[source]?.keywords?.map((keyword, idx) => (
                         <span
                           key={idx}
-                          className="px-2 py-1 rounded-md bg-blue-100 inline-block whitespace-nowrap m-1"
+                          className="px-2 py-1 rounded-md bg-blue-100 inline-block mr-2"
                         >
                           {keyword}
                         </span>
                       ))}
-                    </div>
-                  </div>
+                    </ul>
+                  </div>}
 
-                  <div>
+                  {results?.[source]?.references?.length > 0 && <div>
                     <div className="text-base font-bold mt-8">References</div>
                     <ul className="list-inside text-sm border p-2 rounded-lg text-sky-600">
                       {results?.[source]?.references?.map((ref, idx) => (
@@ -156,9 +173,8 @@ export function UserInputForm() {
                         </li>
                       ))}
                     </ul>
-                  </div>
-
-                  <CTADialog cta={results?.[source]?.cta} />
+                  </div>}
+                  {results?.[source]?.cta && <CTADialog cta={results?.[source]?.cta} />}
                 </TabsContent>
               ))}
             </Tabs>
@@ -216,7 +232,7 @@ export function UserInputForm() {
                           className="data-[state=on]:border-black border-2"
                         >
                           <Image
-                            src="/search.png"
+                            src="/google.png"
                             alt="google"
                             width={50}
                             height={50}

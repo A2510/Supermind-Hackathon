@@ -1,18 +1,20 @@
+import Image from "next/image";
 import { Button } from "@/components/ui/button";
 import {
   Dialog,
   DialogContent,
   DialogDescription,
-  // DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
 } from "@/components/ui/dialog";
-// import Image from "next/image";
 import { SourceData } from "@/types/types";
 import { ArrowRight, Sparkles } from "lucide-react";
 
 export function CTADialog({ cta }: { cta: SourceData["cta"] }) {
+  // State to manage image URL
+  // const imageUrl = await fetchPhoto({ query: cta?.title || null }) || "/audi.jpg";
+
   return (
     <Dialog>
       <DialogTrigger asChild>
@@ -31,9 +33,9 @@ export function CTADialog({ cta }: { cta: SourceData["cta"] }) {
             {cta?.cta_message} <ArrowRight size={16} />
           </Button>
         </div>
-        <img
-          src="https://img-cdn.thepublive.com/fit-in/640x430/filters:format(webp)/indianstartupnews/media/media_files/yyrPzhEhn2jan2PNjfYM.png"
-          alt="Audi"
+        <Image
+          src="/zepto.jpeg"
+          alt={cta?.title || "Logo"}
           width={150}
           height={425}
           className="h-full w-1/3 object-cover mr-4 rounded"
