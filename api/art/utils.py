@@ -32,7 +32,6 @@ class Scraper:
             results = []
 
             for item in data.get("items", []):
-                print(item)
                 results.append({
                     "title": item.get("title"),
                     "link": item.get("link"),

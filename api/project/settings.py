@@ -192,13 +192,13 @@ CORS_ALLOWED_ORIGINS = os.getenv('CORS_ALLOWED_ORIGINS').split(",")
 CSRF_TRUSTED_ORIGINS = os.getenv('CSRF_TRUSTED_ORIGINS').split(",")
 
 
-GOOGLE_API_KEY = "AIzaSyCYdWWpYlAOUprSEDkj4_y1QBFKW7-dCbI"
+# GOOGLE_API_KEY = "AIzaSyCYdWWpYlAOUprSEDkj4_y1QBFKW7-dCbI"
+GOOGLE_API_KEY = "AIzaSyCLFSxmJHuLmT9F8RK8ZPFJif_bHR1dgv8"
 SEARCH_ENGINE_ID = "f1811d352aca148a3"
-SEARCHA_API = " AIzaSyCYdWWpYlAOUprSEDkj4_y1QBFKW7-dCbI"
+GEMINI_API_KEY = "AIzaSyDMPrulx5AjheGz_Fb0784L7Skx2yRETq8"
 USER_AGENT = "windows:com.PRAW:v1.0.0 (by /u/Jaded_Jackass"
 REDDIT_CLIENT_ID = "gG-fuLq1UGWlidmCLVBQiw"
 REDDIT_SECRET = "7g42kLdqN2ZmpfQnolRx5WB10XR9Qg"
-GEMINI_API_KEY = "AIzaSyC4EJnuBGOriYGzUpbAN07sn0u8DcZt41w"
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

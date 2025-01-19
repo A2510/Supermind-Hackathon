@@ -31,6 +31,7 @@ class DashboardView(APIView):
         isCached = request.data.get("isCached", True) 
         target = request.data.get("target")
         list_of_sources = request.data.get("sources")
+
         if not query:
             return Response(
                 {"error": "Please provide a query parameter"},
@@ -58,23 +59,20 @@ class DashboardView(APIView):
         gemini_service = GeminiService(api_key=settings.GEMINI_API_KEY)
 
         try:
-            # Scrape data
             scraped_results = scraper.scrape_all(query, app_id=app_id)
-            # scraped_results = scraper.scrape_reddit(query)
-            # scraped_results = {"reddit": scraped_results}
-            # Process and generate response
             response = {}
             for source, data in scraped_results.items():
+                points_formatter = POINTS_FORMATTER.format(target=target)
                 prompt = gemini_service.build_prompt(
                     user_query=query,
                     source=source,
                     formatted_data=data,
-                    formatter_type=POINTS_FORMATTER,
+                    formatter_type=points_formatter,
                     source_prompts=source_prompt_mapper,
                 )
                 response[source] = gemini_service.generate_response(prompt)
             
-            
+
             # Cache the response
             cache.set(cache_key, response, timeout=3600*24)  # Cache timeout is 24 hour
             logger.info(f"Cached response for query: {query}")
@@ -87,18 +85,15 @@ class DashboardView(APIView):
                 {"error": "An error occurred while processing the request"},
                 status=status.HTTP_500_INTERNAL_SERVER_ERROR,
             )
-            
-# class GetSummary(APIView):
-#     def post(self, request):
-#         response = request.data.get("response")
-#         if not response:
-#             return Response(
-#                 {"error": "Please provide a response parameter"},
-#                 status=status.HTTP_400_BAD_REQUEST,
-#             )
-#         gemini_service = Geminiservice(api_key=settings.GEMINI_API_KEY)
-#         try:
-            
+
+  
+class GetSummary(APIView):
+    def post(self, request):
+        return JsonResponse({
+            "title": """Addressing Delivery Challenges with Speed and Convenience""",
+            "summary" : """This data highlights key challenges like long delivery times, high charges, and limited options in quick commerce. Users are driven by convenience, urgency, and time constraints, with hooks emphasizing fast, effortless delivery. Key terms like "quick commerce" and "instant delivery" reflect the focus on speed and convenience for online grocery shopping."""
+        })
+
 
 class GetTrends(APIView):
     def get(self, request):
