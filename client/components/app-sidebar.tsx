@@ -1,18 +1,10 @@
 "use client";
 
 import * as React from "react";
-import {
-  AudioWaveform,
-  Command,
-  Home,
-  Inbox,
-  Search,
-  Sparkles,
-} from "lucide-react";
+import { Lightbulb, Sparkles } from "lucide-react";
 
 import { NavFavorites } from "@/components/nav-favorites";
 import { NavMain } from "@/components/nav-main";
-import { TeamSwitcher } from "@/components/team-switcher";
 import {
   Sidebar,
   SidebarContent,
@@ -22,50 +14,17 @@ import {
 
 // This is sample data.
 const data = {
-  teams: [
-    {
-      name: "Acme Inc",
-      logo: Command,
-      plan: "Enterprise",
-    },
-    {
-      name: "Acme Corp.",
-      logo: AudioWaveform,
-      plan: "Startup",
-    },
-    {
-      name: "Evil Corp.",
-      logo: Command,
-      plan: "Free",
-    },
-  ],
   navMain: [
     {
-      title: "Search",
-      url: "#",
-      icon: Search,
-    },
-    {
-      title: "Ask AI",
+      title: "New",
       url: "#",
       icon: Sparkles,
-    },
-    {
-      title: "Home",
-      url: "#",
-      icon: Home,
       isActive: true,
-    },
-    {
-      title: "Inbox",
-      url: "#",
-      icon: Inbox,
-      badge: "10",
     },
   ],
   favorites: [
     {
-      name: "Project Management & Task Tracking",
+      name: "Oganic Food and eCommerce Store",
       url: "#",
       emoji: "📊",
     },
@@ -85,7 +44,7 @@ const data = {
       emoji: "📚",
     },
     {
-      name: "Sustainable Gardening Tips & Plant Care",
+      name: "Sustainable Gardening & Plant Care",
       url: "#",
       emoji: "🌱",
     },
@@ -95,7 +54,7 @@ const data = {
       emoji: "🗣️",
     },
     {
-      name: "Home Renovation Ideas & Budget Tracker",
+      name: "Home Renovation & Budget Tracker",
       url: "#",
       emoji: "🏠",
     },
@@ -121,7 +80,15 @@ export function AppSidebar({ ...props }: React.ComponentProps<typeof Sidebar>) {
   return (
     <Sidebar className="border-r-0" {...props}>
       <SidebarHeader>
-        <TeamSwitcher teams={data.teams} />
+        <div className="flex gap-2 py-2">
+          <div className="flex aspect-square size-8 items-center justify-center rounded-md bg-sidebar-primary text-sidebar-primary-foreground">
+            <Lightbulb className="size-5" strokeWidth={2} />
+          </div>
+          <div className="leading-none">
+            <div className="font-bold">Adspire</div>
+            <div className="text-xs opacity-60">by MotionMinds</div>
+          </div>
+        </div>
         <NavMain items={data.navMain} />
       </SidebarHeader>
       <SidebarContent>
